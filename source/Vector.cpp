@@ -2,7 +2,7 @@
 // Created by ilia on 17.09.23.
 //
 
-#include "Vector.hpp"
+#include "../headers/Vector.hpp"
 
 Vector::Vector() {
     size_ = 0;

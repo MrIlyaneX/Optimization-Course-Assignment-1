@@ -29,8 +29,6 @@ public:
 
     Matrix &operator=(const Matrix &other);
 
-    // You can add more operations and methods as needed for your use case
-
 private:
     int rows_;
     int columns_;

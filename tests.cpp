@@ -6,9 +6,9 @@
 #include <cassert>
 
 // Custom classes
-#include "Vector.hpp"
-#include "Matrix.hpp"
-#include "SimplexMethod.hpp"
+#include "headers/Vector.hpp"
+#include "headers/Matrix.hpp"
+#include "headers/SimplexMethod.hpp"
 
 using namespace std;
 

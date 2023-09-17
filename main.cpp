@@ -2,9 +2,9 @@
 
 
 // Custom classes
-#include "Matrix.hpp"
-#include "Vector.hpp"
-#include "SimplexMethod.hpp"
+#include "headers/Matrix.hpp"
+#include "headers/Vector.hpp"
+#include "headers/SimplexMethod.hpp"
 
 using namespace std;
 

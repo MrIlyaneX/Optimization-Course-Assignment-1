@@ -2,7 +2,7 @@
 // Created by ilia on 17.09.23.
 //
 
-#include "Matrix.hpp"
+#include "../headers/Matrix.hpp"
 
 Matrix::Matrix() {
     rows_ = 0;
