@@ -6,6 +6,7 @@
 #define OPTIMIZATION_COURSE_ASSIGNMENT_1_MATRIX_HPP
 
 #include <iostream>
+#include "Vector.hpp"
 
 using namespace std;
 
@@ -28,6 +29,20 @@ public:
     float operator()(int row, int column) const;
 
     Matrix &operator=(const Matrix &other);
+
+    Matrix operator*(Vector vector) const;
+
+    Matrix &operator*=(Vector &vector);
+
+    [[nodiscard]] Vector getRow(int index) const;
+
+    void setRow(int index, Vector &vector);
+
+    [[nodiscard]] Vector getCol(int index) const;
+
+    void setCol(int index, Vector &vector);
+
+    [[nodiscard]] Matrix transpose() const;
 
 private:
     int rows_;
