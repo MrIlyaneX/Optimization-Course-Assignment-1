@@ -10,6 +10,6 @@ using namespace std;
 
 int main() {
 
-
+    Matrix main_matrix(3, 7);
     return EXIT_SUCCESS;
 }

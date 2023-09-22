@@ -14,28 +14,35 @@ using namespace std;
 class SimplexMethod {
 public:
 
+    static void start_simplex(Vector &A, Vector &B, Vector &C);
+
 
 private:
 
-    int define_pivot_col(Vector &net_eval);
+    static void initialize_algorithm_data(const Vector &A, const Vector &B, const Vector &C, Matrix &main_matrix,
+                                          Vector &func_coefficients,
+                                          Vector &basis, Vector &profit,
+                                          Vector &basis_el, Vector &net_eval);
 
-    Vector calculate_ratio(Matrix &main_matrix, Vector &pivot_col);
+    static int define_pivot_col(Vector &net_eval);
 
-    float define_pivot_row(Vector &ratio);
+    static Vector calculate_ratio(Matrix &main_matrix, int &pivot_col);
 
-    float define_pivot_element(Matrix &main_matrix, Vector &pivot_col, Vector &pivot_row);
+    static int define_pivot_row(Vector &ratio);
 
-    Vector define_basis(Vector &basis, Vector &pivot_row, Vector &piwvt_col, Vector &function_coefficients);
+    static float define_pivot_element(Matrix &main_matrix, int &pivot_col, int &pivot_row);
 
-    Matrix update_main_matrix(Matrix &main_matrix, Vector &pivot_row, Vector &pivot_col, float pivot_element);
+    static Vector define_basis(Vector &basis, int &pivot_row, int &pivot_col, Vector &function_coefficients);
 
-    Vector define_basis_element(Vector &basis, Vector &pivot_row, Vector &pivot_col);
+    static Matrix update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element);
 
-    Vector calculate_profit(Matrix &main_matrix, Vector &basis);
+    static Vector define_basis_element(Vector &basis, Vector &basis_el, int &pivot_row, int &pivot_col);
 
-    Vector calculate_net_evaluation(Vector &function_coefficients, Vector &profit);
+    static Vector calculate_profit(Matrix &main_matrix, Vector &basis);
 
-    bool check_net_evaluation(Vector &net_eval);
+    static Vector calculate_net_evaluation(Vector &function_coefficients, Vector &profit);
+
+    static bool check_net_evaluation(Vector &net_eval);
 
 };
 

@@ -4,44 +4,125 @@
 
 #include "../headers/SimplexMethod.hpp"
 
+// to check signs of numbers (since floating point numbers could work badly with <= or ==)
+#include <cmath>
 
 int SimplexMethod::define_pivot_col(Vector &net_eval) {
-    return 0;
+    float mx = 0.f;
+    int index = -1;
+    for (int i = 0; i < net_eval.size(); ++i) {
+        if (isless(mx, net_eval[i])) {
+            mx = net_eval[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
-Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, Vector &pivot_col) {
-    return Vector();
+Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col) {
+    if (pivot_col == -1) {
+        printf("No pivot column");
+        exit(10);
+    }
+    Vector pivot_column = main_matrix.getCol(pivot_col);
+    Vector ans = main_matrix.getCol(main_matrix.columns() - 1);
+    for (int i = 0; i < pivot_column.size(); ++i) {
+        if (isgreater(abs(ans[i]), 0) && isgreater(abs(pivot_column[i]), 0)) {
+            ans[i] = ans[i] / pivot_column[i];
+            continue;
+        }
+        ans[i] = -1.0;
+    }
+
+    return ans;
 }
 
-float SimplexMethod::define_pivot_row(Vector &ratio) {
-    return 0;
+int SimplexMethod::define_pivot_row(Vector &ratio) {
+    float ans = -1;
+    int index = -1;
+    for (int i = 0; i < ratio.size(); ++i) {
+        if (signbit(ratio[i])) continue;
+        if (isless(ans, ratio[i])) {
+            ans = ratio[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
-float SimplexMethod::define_pivot_element(Matrix &main_matrix, Vector &pivot_col, Vector &pivot_row) {
-    return 0;
+float SimplexMethod::define_pivot_element(Matrix &main_matrix, int &pivot_col, int &pivot_row) {
+    return main_matrix(pivot_col, pivot_row);
 }
 
-Vector SimplexMethod::define_basis(Vector &basis, Vector &pivot_row, Vector &piwvt_col, Vector &function_coefficients) {
-    return Vector();
+Vector SimplexMethod::define_basis(Vector &basis, int &pivot_row, int &pivot_col, Vector &function_coefficients) {
+    basis[pivot_row] = function_coefficients[pivot_col];
+    return basis;
 }
 
 Matrix
-SimplexMethod::update_main_matrix(Matrix &main_matrix, Vector &pivot_row, Vector &pivot_col, float pivot_element) {
-    return Matrix();
+SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element) {
+    Matrix new_matrix = main_matrix;
+    Vector new_pivot_row = main_matrix.getRow(pivot_col) / pivot_element;
+    new_matrix.setRow(pivot_row, new_pivot_row);
+    for (int i = 0; i < main_matrix.rows(); ++i) {
+        auto buf = new_matrix.getRow(pivot_row) * main_matrix(i, pivot_col);
+        buf = main_matrix.getRow(i) - buf;
+        new_matrix.setRow(i, buf);
+    }
+
+    return new_matrix;
 }
 
-Vector SimplexMethod::define_basis_element(Vector &basis, Vector &pivot_row, Vector &pivot_col) {
-    return Vector();
+Vector SimplexMethod::define_basis_element(Vector &basis, Vector &basis_el,int &pivot_row, int &pivot_col) {
+    basis_el[pivot_row] = pivot_col + 1;
+    return basis;
 }
 
 Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis) {
-    return Vector();
+    return (main_matrix.transpose() * basis);
 }
 
 Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Vector &profit) {
-    return Vector();
+    return (function_coefficients - profit);
 }
 
 bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
-    return false;
+    for (int i = 0; i < net_eval.size(); ++i) {
+        if (!islessequal(net_eval[i], 0.f)) return false;
+    }
+    return true;
+}
+
+void SimplexMethod::start_simplex(Vector &A, Vector &B, Vector &C) {
+    Matrix main_matrix;
+    Vector func_coefficients;
+    Vector basis(main_matrix.rows());
+    Vector profit(main_matrix.columns());
+    Vector basis_el(main_matrix.rows());
+    Vector net_eval(main_matrix.columns() - 1);
+
+    initialize_algorithm_data(A, B, C, main_matrix, func_coefficients, basis, profit, basis_el, net_eval);
+
+
+    for (int i = 0; i < main_matrix.rows(); ++i) {
+        int pivot_col = define_pivot_col(net_eval);
+        Vector ratio = calculate_ratio(main_matrix, pivot_col);
+        int pivot_row = define_pivot_row(ratio);
+        float pivot_el = define_pivot_element(main_matrix, pivot_col, pivot_row);
+        basis = define_basis(basis, pivot_row, pivot_col, func_coefficients);
+        main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el);
+        profit = calculate_profit(main_matrix, basis);
+        net_eval = calculate_net_evaluation(func_coefficients, profit);
+        if (check_net_evaluation(net_eval)) break;
+    }
+    for (int i = 0; i < basis.size(); ++i) {
+        cout << "x" << basis_el[i] << " = " << basis[i] << "\n";
+        cout << "Profit = " << profit[profit.size() - 1] << "\n";
+    }
+}
+
+void SimplexMethod::initialize_algorithm_data(const Vector &A, const Vector &B, const Vector &C, Matrix &main_matrix,
+                                              Vector &func_coefficients, Vector &basis, Vector &profit,
+                                              Vector &basis_el, Vector &net_eval) {
+
 }

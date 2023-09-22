@@ -30,9 +30,9 @@ public:
 
     Matrix &operator=(const Matrix &other);
 
-    Matrix operator*(Vector vector) const;
+    Vector operator*(Vector vector) const;
 
-    Matrix &operator*=(Vector &vector);
+    Vector &operator*=(Vector &vector);
 
     [[nodiscard]] Vector getRow(int index) const;
 

@@ -104,36 +104,24 @@ void Matrix::swap(Matrix &first, Matrix &second) {
 }
 
 
-Matrix Matrix::operator*(Vector vector) const {
+Vector Matrix::operator*(Vector vector) const {
     if (columns_ != vector.size()) {
         throw invalid_argument("Matrix and vector dimensions are incompatible for multiplication.");
     }
 
-    Matrix result(rows_, 1);
+    Vector result(rows_);
 
     for (int i = 0; i < rows_; ++i) {
         float sum = 0.0;
         for (int j = 0; j < columns_; ++j) {
             sum += data_[i][j] * vector[j];
         }
-        result(i, 0) = sum;
+        result[i] = sum;
     }
 
     return result;
 }
 
-Matrix &Matrix::operator*=(Vector &vector) {
-    if (columns_ != vector.size()) {
-        throw invalid_argument("Matrix and vector dimensions are incompatible for multiplication.");
-    }
-
-    Matrix result = (*this) * vector;
-
-
-    *this = result;
-
-    return *this;
-}
 
 Vector Matrix::getRow(int index) const {
     if (index < 0 || index >= rows_) {
