@@ -14,15 +14,13 @@ using namespace std;
 class SimplexMethod {
 public:
 
-    static void start_simplex(Vector &A, Vector &B, Vector &C);
+    static void start_simplex(const Matrix &A, const Vector &B, const Vector &C, float accuracy);
 
 
 private:
 
-    static void initialize_algorithm_data(const Vector &A, const Vector &B, const Vector &C, Matrix &main_matrix,
-                                          Vector &func_coefficients,
-                                          Vector &basis, Vector &profit,
-                                          Vector &basis_el, Vector &net_eval);
+    static void initialize_algorithm_data(const Matrix &A, const Vector &B, const Vector &C, Matrix &main_matrix,
+                                          Vector &func_coefficients, Vector &net_eval);
 
     static int define_pivot_col(Vector &net_eval);
 
