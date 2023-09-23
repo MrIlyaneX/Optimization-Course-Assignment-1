@@ -3,20 +3,16 @@
 //
 
 #include "../headers/Vector.hpp"
+#include <cmath>
 
 Vector::Vector() {
-    size_ = 0;
-    real_size_ = 0;
-    vector_ = nullptr;
+    vector_ = vector<float>();
 }
 
-Vector::Vector(int vector_size) {
-    size_ = vector_size;
-    real_size_ = vector_size * 2;
-
-    vector_ = new float[real_size_]();
-    for (int i = 0; i < real_size_; i++) {
-        vector_[i] = 0.0f;;
+Vector::Vector(int vector_size, float initial_value) {
+    vector_ = vector<float>(vector_size, initial_value);
+    for (int i = 0; i < vector_size; i++) {
+        vector_[i] = initial_value;
     }
 }
 
@@ -25,33 +21,30 @@ Vector::Vector(const Vector &other) {
         return;
     }
 
-    size_ = other.size_;
-    real_size_ = other.real_size_;
+    vector_ = vector<float>(other.size(), 0.0f);
 
-    vector_ = new float[real_size_]();
-
-    for (int i = 0; i < size_; i++) {
+    for (int i = 0; i < vector_.size(); i++) {
         vector_[i] = other.vector_[i];
     }
 }
 
 Vector::~Vector() {
-    deallocate();
+    vector_ = vector<float>(0);
 }
 
 int Vector::size() const {
-    return size_;
+    return (int) vector_.size();
 }
 
 float &Vector::operator[](int index) {
-    if (index < 0 || index >= size_) {
+    if (index < 0 || index >= vector_.size()) {
         throw out_of_range("Index out of range. Vector &operator[]");
     }
     return vector_[index];
 }
 
 float Vector::operator[](int index) const {
-    if (index < 0 || index >= size_) {
+    if (index < 0 || index >= vector_.size()) {
         throw out_of_range("Index out of range. Vector operator[]");
     }
     return vector_[index];
@@ -64,7 +57,8 @@ Vector Vector::operator-(Vector &vector) const {
 }
 
 Vector &Vector::operator-=(Vector &vector) {
-    for (int i = 0; i < size_; i++) {
+    int size = min((int) vector.size(), (int) vector_.size());
+    for (int i = 0; i < size; i++) {
         vector_[i] -= vector[i];
     }
     return *this;
@@ -77,8 +71,8 @@ Vector Vector::operator*(const float scalar) const {
 }
 
 Vector &Vector::operator*=(const float scalar) {
-    for (int i = 0; i < size_; i++) {
-        vector_[i] *= scalar;
+    for (float &i: vector_) {
+        i *= scalar;
     }
     return *this;
 }
@@ -95,27 +89,14 @@ Vector &Vector::operator/=(const float scalar) {
         return *this;
     }
 
-    for (int i = 0; i < size_; i++) {
-        vector_[i] /= scalar;
+    for (float &i: vector_) {
+        i /= scalar;
     }
     return *this;
 }
 
 void Vector::resize() {
-    int new_size = real_size_ * 2;
-    auto *new_vector = new float[new_size]();
-
-
-    for (int i = 0; i < real_size_; i++) {
-        new_vector[i] = vector_[i];
-    }
-    for (int i = real_size_; i < new_size; i++) {
-        new_vector[i] = 0;
-    }
-
-    delete[] vector_;
-    vector_ = new_vector;
-    real_size_ = new_size;
+    vector_.resize(vector_.size() * 2);
 }
 
 Vector &Vector::operator=(Vector other) {
@@ -129,19 +110,6 @@ Vector &Vector::operator=(Vector other) {
 }
 
 
-void Vector::deallocate() {
-    if (vector_ != nullptr) {
-
-        delete[] vector_;
-        size_ = 0;
-        real_size_ = 0;
-
-        vector_ = nullptr;
-    }
-}
-
 void Vector::swap(Vector &first, Vector &second) {
     std::swap(first.vector_, second.vector_);
-    std::swap(first.real_size_, second.real_size_);
-    std::swap(first.size_, second.size_);
 }

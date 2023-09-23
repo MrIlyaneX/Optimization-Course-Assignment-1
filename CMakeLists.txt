@@ -3,4 +3,4 @@ project(Optimization-Course-Assignment-1)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Optimization-Course-Assignment-1 tests.cpp source/Vector.cpp source/Matrix.cpp source/SimplexMethod.cpp)
+add_executable(Optimization-Course-Assignment-1 main.cpp source/Vector.cpp source/Matrix.cpp source/SimplexMethod.cpp)

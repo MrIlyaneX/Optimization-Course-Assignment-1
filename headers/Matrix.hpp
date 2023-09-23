@@ -6,6 +6,7 @@
 #define OPTIMIZATION_COURSE_ASSIGNMENT_1_MATRIX_HPP
 
 #include <iostream>
+#include <iterator>
 #include "Vector.hpp"
 
 using namespace std;
@@ -32,11 +33,34 @@ public:
 
     Vector operator*(Vector vector) const;
 
-    Vector &operator*=(Vector &vector);
-
     [[nodiscard]] Vector getRow(int index) const;
 
     void setRow(int index, Vector &vector);
+
+    //overloaded ostream operator
+    friend std::ostream &operator<<(std::ostream &os, const Matrix &item) {
+        for (int i = 0; i < item.rows(); ++i) {
+            for (int j = 0; j < item.columns(); ++j) {
+                os << item(i, j) << " ";
+            }
+            cout << "\n";
+        }
+        return os;
+    }
+
+    //overloaded istream operator
+    friend std::istream &operator>>(std::istream &input_stream, Matrix &item) {
+        for (int i = 0; i < item.rows(); ++i) {
+            for (int j = 0; j < item.columns(); ++j) {
+                input_stream >> item(i, j);
+            }
+        }
+        if (!input_stream) {
+            throw std::runtime_error("Invalid input (matrix input error)\n");
+        }
+        return input_stream;
+    }
+
 
     [[nodiscard]] Vector getCol(int index) const;
 
@@ -47,9 +71,7 @@ public:
 private:
     int rows_;
     int columns_;
-    float **data_;
-
-    void deallocate();
+    vector<vector<float>> data_;
 
     static void swap(Matrix &first, Matrix &second);
 };

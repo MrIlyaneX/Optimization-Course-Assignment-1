@@ -9,7 +9,7 @@ using namespace std;
 Matrix::Matrix() {
     rows_ = 0;
     columns_ = 0;
-    data_ = nullptr;
+    data_ = vector<vector<float>>();
 }
 
 
@@ -17,16 +17,7 @@ Matrix::Matrix(int rows, int columns) {
     rows_ = rows;
     columns_ = columns;
 
-    data_ = new float *[rows_]();
-    for (int i = 0; i < rows_; i++) {
-        data_[i] = new float[columns_]();
-    }
-
-    for (int i = 0; i < rows_; i++) {
-        for (int j = 0; j < columns_; j++) {
-            data_[i][j] = 0.0f;
-        }
-    }
+    data_ = vector<vector<float>>(rows, vector<float>(columns, 0.0f));
 }
 
 
@@ -34,10 +25,7 @@ Matrix::Matrix(const Matrix &other) {
     rows_ = other.rows_;
     columns_ = other.columns_;
 
-    data_ = new float *[rows_]();
-    for (int i = 0; i < rows_; i++) {
-        data_[i] = new float[columns_]();
-    }
+    data_ = vector<vector<float>>(rows_, vector<float>(columns_, 0.0f));
 
     for (int i = 0; i < rows_; i++) {
         for (int j = 0; j < columns_; j++) {
@@ -47,7 +35,9 @@ Matrix::Matrix(const Matrix &other) {
 }
 
 Matrix::~Matrix() {
-    deallocate();
+    rows_ = 0;
+    columns_ = 0;
+    data_ = vector<vector<float>>(0);
 }
 
 [[nodiscard]] int Matrix::rows() const {
@@ -82,20 +72,6 @@ Matrix &Matrix::operator=(const Matrix &other) {
     return *this;
 }
 
-
-void Matrix::deallocate() {
-    if (data_ != nullptr) {
-        for (int i = 0; i < rows_; i++) {
-            delete[] data_[i];
-        }
-
-        delete[] data_;
-        rows_ = 0;
-        columns_ = 0;
-
-        data_ = nullptr;
-    }
-}
 
 void Matrix::swap(Matrix &first, Matrix &second) {
     std::swap(first.rows_, second.rows_);

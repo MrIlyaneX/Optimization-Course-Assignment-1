@@ -7,6 +7,8 @@
 
 
 #include <iostream>
+#include <vector>
+
 
 using namespace std;
 
@@ -15,7 +17,7 @@ class Vector {
 public:
     Vector();
 
-    explicit Vector(int vector_size);
+    explicit Vector(int vector_size, float initial_value = 0.0f);
 
     Vector(const Vector &other);
 
@@ -41,15 +43,32 @@ public:
 
     Vector &operator=(Vector other);
 
-private:
-    int size_, real_size_;
+    //overloaded ostream operator
+    friend std::ostream &operator<<(std::ostream &os, const Vector &item) {
+        for (int i = 0; i < item.size(); ++i) {
+            os << item[i] << " ";
+        }
+        cout << "\n";
+        return os;
+    }
 
-    float *vector_;
+    //overloaded istream operator
+    friend std::istream &operator>>(std::istream &input_stream, Vector &item) {
+        for (int i = 0; i < item.size(); ++i) {
+            input_stream >> item[i];
+        }
+        if (!input_stream) {
+            throw std::runtime_error("Invalid input (matrix input error)\n");
+        }
+        return input_stream;
+    }
+
+private:
+    vector<float> vector_;
 
     // resize function since the standard arrays used for storing data
     void resize();
 
-    void deallocate();
 
     static void swap(Vector &first, Vector &second);
 };
