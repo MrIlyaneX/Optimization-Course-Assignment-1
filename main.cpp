@@ -11,7 +11,7 @@ using namespace std;
 void check_data_1() {
 
     Vector b(3), C(3);
-    Matrix A(3, 6);
+    Matrix A(3, 3);
     float accuracy;
 
     cin >> C >> A >> b >> accuracy;

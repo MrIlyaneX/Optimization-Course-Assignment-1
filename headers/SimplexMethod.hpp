@@ -42,6 +42,8 @@ private:
 
     static bool check_net_evaluation(Vector &net_eval);
 
+    static float rounding(float epsilon, float variable);
+
 };
 
 #endif //OPTIMIZATION_COURSE_ASSIGNMENT_1_SIMPLEXMETHOD_HPP

@@ -136,12 +136,13 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
 void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, const Vector &C, Matrix &main_matrix,
                                               Vector &func_coefficients, Vector &net_eval) {
 
-    main_matrix = Matrix(A.rows(), A.columns() + 1);
+    main_matrix = Matrix(A.rows(), A.columns() * 2 + 1);
     func_coefficients = Vector(main_matrix.columns() - 1, 0.0f);
     for (int i = 0; i < A.rows(); ++i) {
         for (int j = 0; j < A.columns(); ++j) {
             main_matrix(i, j) = A(i, j);
         }
+        main_matrix(i, A.columns() + i) = 1.0000f;
     }
 
     for (int i = 0; i < C.size(); ++i) {
@@ -155,4 +156,10 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
 
     cout << "Check of initial data data:\n" << main_matrix << ":coefficients:\n" << func_coefficients << ":net_eval:\n"
          << net_eval << "\n";
+}
+
+// rounds the numbers using given epsilon
+float SimplexMethod::rounding(float epsilon, float variable) {
+
+    return 0;
 }
