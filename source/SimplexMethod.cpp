@@ -70,6 +70,7 @@ SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivo
     Vector new_pivot_row = main_matrix.getRow(pivot_row) / pivot_element;
     new_matrix.setRow(pivot_row, new_pivot_row);
     for (int i = 0; i < main_matrix.rows(); ++i) {
+        if (i == pivot_row) continue;
         auto buf = new_matrix.getRow(pivot_row) * main_matrix(i, pivot_col);
         buf = main_matrix.getRow(i) - buf;
         new_matrix.setRow(i, buf);
@@ -92,7 +93,7 @@ Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Ve
 }
 
 bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
-    for (int i = 0; i < net_eval.size(); ++i) {
+    for (int i = 0; i < net_eval.size() - 1; ++i) {
         if (!islessequal(net_eval[i], 0.f)) return false;
     }
     return true;
@@ -115,6 +116,7 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
         ratio = calculate_ratio(main_matrix, pivot_col);
         int pivot_row = define_pivot_row(ratio);
         float pivot_el = define_pivot_element(main_matrix, pivot_col, pivot_row);
+        basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
         basis = define_basis(basis, pivot_row, pivot_col, func_coefficients);
         main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el);
         profit = calculate_profit(main_matrix, basis);
