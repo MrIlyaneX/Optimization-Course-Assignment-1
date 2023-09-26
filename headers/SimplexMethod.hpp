@@ -16,6 +16,12 @@ public:
 
     static void start_simplex(const Matrix &A, const Vector &B, const Vector &C, float accuracy);
 
+    // methods for rounding
+    static float rounding(float epsilon, float variable);
+
+    static Vector rounding(float epsilon, Vector &variable);
+
+    static Matrix rounding(float epsilon, Matrix &variable);
 
 private:
 
@@ -24,7 +30,7 @@ private:
 
     static int define_pivot_col(Vector &net_eval);
 
-    static Vector calculate_ratio(Matrix &main_matrix, int &pivot_col);
+    static Vector calculate_ratio(Matrix &main_matrix, int &pivot_col, float accuracy);
 
     static int define_pivot_row(Vector &ratio);
 
@@ -32,17 +38,17 @@ private:
 
     static Vector define_basis(Vector &basis, int &pivot_row, int &pivot_col, Vector &function_coefficients);
 
-    static Matrix update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element);
+    static Matrix
+    update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element, float accuracy);
 
     static Vector define_basis_element(Vector &basis, Vector &basis_el, int &pivot_row, int &pivot_col);
 
-    static Vector calculate_profit(Matrix &main_matrix, Vector &basis);
+    static Vector calculate_profit(Matrix &main_matrix, Vector &basis, float accuracy);
 
     static Vector calculate_net_evaluation(Vector &function_coefficients, Vector &profit);
 
     static bool check_net_evaluation(Vector &net_eval);
 
-    static float rounding(float epsilon, float variable);
 
 };
 

@@ -19,7 +19,7 @@ int SimplexMethod::define_pivot_col(Vector &net_eval) {
     return index;
 }
 
-Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col) {
+Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col, const float accuracy) {
     if (pivot_col == -1) {
         cout << "No pivot column\n:main_matrix:\n" << main_matrix;
         exit(10);
@@ -27,18 +27,14 @@ Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col) {
     Vector pivot_column = main_matrix.getCol(pivot_col);
     Vector ans = main_matrix.getCol(main_matrix.columns() - 1);
 
-    //cout << ans << pivot_column;
-
     for (int i = 0; i < pivot_column.size(); ++i) {
         if (isgreater(abs(ans[i]), 0) && isgreater(abs(pivot_column[i]), 0.00f)) {
             ans[i] = ans[i] / pivot_column[i];
+            ans[i] = rounding(accuracy, ans[i]);
             continue;
         }
         ans[i] = -1.0;
     }
-
-    //cout << ans << endl;
-
     return ans;
 }
 
@@ -56,7 +52,7 @@ int SimplexMethod::define_pivot_row(Vector &ratio) {
 }
 
 float SimplexMethod::define_pivot_element(Matrix &main_matrix, int &pivot_col, int &pivot_row) {
-    return main_matrix(pivot_col, pivot_row);
+    return main_matrix(pivot_row, pivot_col);
 }
 
 Vector SimplexMethod::define_basis(Vector &basis, int &pivot_row, int &pivot_col, Vector &function_coefficients) {
@@ -65,7 +61,8 @@ Vector SimplexMethod::define_basis(Vector &basis, int &pivot_row, int &pivot_col
 }
 
 Matrix
-SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element) {
+SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivot_col, float pivot_element,
+                                  const float accuracy) {
     Matrix new_matrix = main_matrix;
     Vector new_pivot_row = main_matrix.getRow(pivot_row) / pivot_element;
     new_matrix.setRow(pivot_row, new_pivot_row);
@@ -76,6 +73,8 @@ SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivo
         new_matrix.setRow(i, buf);
     }
 
+    new_matrix = rounding(accuracy, new_matrix);
+
     return new_matrix;
 }
 
@@ -84,8 +83,9 @@ Vector SimplexMethod::define_basis_element(Vector &basis, Vector &basis_el, int 
     return basis;
 }
 
-Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis) {
-    return (main_matrix.transpose() * basis);
+Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis, const float accuracy) {
+    Vector temp = main_matrix.transpose() * basis;
+    return rounding(accuracy, temp);
 }
 
 Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Vector &profit) {
@@ -111,15 +111,15 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
     Vector ratio(main_matrix.rows(), 0.0f);
 
 
-    for (int i = 0; i < main_matrix.rows(); ++i) {
+    for (int i = 0; i < A.rows(); ++i) {
         int pivot_col = define_pivot_col(net_eval);
-        ratio = calculate_ratio(main_matrix, pivot_col);
+        ratio = calculate_ratio(main_matrix, pivot_col, accuracy);
         int pivot_row = define_pivot_row(ratio);
         float pivot_el = define_pivot_element(main_matrix, pivot_col, pivot_row);
-        basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
         basis = define_basis(basis, pivot_row, pivot_col, func_coefficients);
-        main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el);
-        profit = calculate_profit(main_matrix, basis);
+        basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
+        main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el, accuracy);
+        profit = calculate_profit(main_matrix, basis, accuracy);
         net_eval = calculate_net_evaluation(func_coefficients, profit);
 
         cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
@@ -158,8 +158,26 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
          << net_eval << "\n";
 }
 
-// rounds the numbers using given epsilon
+// rounds the numbers using given epsilon, should work with small epsilon
 float SimplexMethod::rounding(float epsilon, float variable) {
+    float roundedValue = floorf(variable / epsilon + 0.5) * epsilon;
+    return roundedValue;
+}
 
-    return 0;
+Vector SimplexMethod::rounding(float epsilon, Vector &variable) {
+    Vector rounded_vector(variable.size());
+    for (int i = 0; i < variable.size(); ++i) {
+        rounded_vector[i] = rounding(epsilon, variable[i]);
+    }
+    return rounded_vector;
+}
+
+Matrix SimplexMethod::rounding(float epsilon, Matrix &variable) {
+    Matrix rounded_matrix(variable.rows(), variable.columns());
+    for (int i = 0; i < variable.rows(); ++i) {
+        for (int j = 0; j < variable.columns(); ++j) {
+            rounded_matrix(i, j) = rounding(epsilon, variable(i, j));
+        }
+    }
+    return rounded_matrix;
 }
