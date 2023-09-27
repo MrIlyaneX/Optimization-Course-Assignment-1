@@ -82,7 +82,7 @@ SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivo
 
 Vector SimplexMethod::define_basis_element(Vector &basis, Vector &basis_el, int &pivot_row, int &pivot_col) {
     basis_el[pivot_row] = pivot_col + 1;
-    return basis;
+    return basis_el;
 }
 
 Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis, const float accuracy) {
@@ -132,7 +132,7 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
         if (check_net_evaluation(net_eval)) break;
     }
     for (int i = 0; i < basis.size(); ++i) {
-        cout << "x_" << basis_el[i] << " = " << basis[i] << "\n";
+        if (basis_el[i] != 0) cout << "x_" << basis_el[i] << " = " << main_matrix(i, main_matrix.columns()-1) << "\n";
     }
     cout << "Profit = " << profit[profit.size() - 1] << "\n" << profit;
 }
