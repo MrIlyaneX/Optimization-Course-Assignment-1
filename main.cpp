@@ -2,8 +2,6 @@
 #include <fstream>
 
 // Custom classes
-#include "headers/Matrix.hpp"
-#include "headers/Vector.hpp"
 #include "headers/SimplexMethod.hpp"
 
 using namespace std;

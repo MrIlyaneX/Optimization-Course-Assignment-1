@@ -65,6 +65,8 @@ SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivo
                                   const float accuracy) {
     Matrix new_matrix = main_matrix;
     Vector new_pivot_row = main_matrix.getRow(pivot_row) / pivot_element;
+    new_pivot_row = rounding(accuracy, new_pivot_row);
+
     new_matrix.setRow(pivot_row, new_pivot_row);
     for (int i = 0; i < main_matrix.rows(); ++i) {
         if (i == pivot_row) continue;
@@ -89,7 +91,8 @@ Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis, const
 }
 
 Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Vector &profit) {
-    return (function_coefficients - profit);
+    Vector ans = (function_coefficients - profit);
+    return rounding(0.1, ans);
 }
 
 bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
@@ -100,6 +103,9 @@ bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
 }
 
 void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector &C, const float accuracy) {
+    check_feasibility(A, B, C, accuracy);
+
+
     Matrix main_matrix;
     Vector func_coefficients;
 
@@ -136,6 +142,7 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
 void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, const Vector &C, Matrix &main_matrix,
                                               Vector &func_coefficients, Vector &net_eval) {
 
+
     main_matrix = Matrix(A.rows(), A.columns() * 2 + 1);
     func_coefficients = Vector(main_matrix.columns() - 1, 0.0f);
     for (int i = 0; i < A.rows(); ++i) {
@@ -160,7 +167,7 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
 
 // rounds the numbers using given epsilon, should work with small epsilon
 float SimplexMethod::rounding(float epsilon, float variable) {
-    float roundedValue = floorf(variable / epsilon + 0.5) * epsilon;
+    float roundedValue = roundf(variable / epsilon) * epsilon;
     return roundedValue;
 }
 
@@ -180,4 +187,13 @@ Matrix SimplexMethod::rounding(float epsilon, Matrix &variable) {
         }
     }
     return rounded_matrix;
+}
+
+
+void SimplexMethod::check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon) {
+    for (int i = 0; i < B.size(); ++i) {
+        if (isless(B[i], epsilon - epsilon)) {
+            cout << "Infeasible solution: Wrong input for vector B";
+        }
+    }
 }

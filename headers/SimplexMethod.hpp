@@ -16,13 +16,6 @@ public:
 
     static void start_simplex(const Matrix &A, const Vector &B, const Vector &C, float accuracy);
 
-    // methods for rounding
-    static float rounding(float epsilon, float variable);
-
-    static Vector rounding(float epsilon, Vector &variable);
-
-    static Matrix rounding(float epsilon, Matrix &variable);
-
 private:
 
     static void initialize_algorithm_data(const Matrix &A, const Vector &B, const Vector &C, Matrix &main_matrix,
@@ -49,7 +42,14 @@ private:
 
     static bool check_net_evaluation(Vector &net_eval);
 
+    // methods for rounding
+    static float rounding(float epsilon, float variable);
 
+    static Vector rounding(float epsilon, Vector &variable);
+
+    static Matrix rounding(float epsilon, Matrix &variable);
+
+    static void check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon);
 };
 
 #endif //OPTIMIZATION_COURSE_ASSIGNMENT_1_SIMPLEXMETHOD_HPP
