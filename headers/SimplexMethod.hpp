@@ -49,7 +49,9 @@ private:
 
     static Matrix rounding(float epsilon, Matrix &variable);
 
-    static void check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon);
+    static bool check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon);
+
+    static Vector form_x_vector(Vector &x, Vector &basis_el, Matrix &main_matrix);
 };
 
 #endif //OPTIMIZATION_COURSE_ASSIGNMENT_1_SIMPLEXMETHOD_HPP

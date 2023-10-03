@@ -81,7 +81,7 @@ SimplexMethod::update_main_matrix(Matrix &main_matrix, int &pivot_row, int &pivo
 }
 
 Vector SimplexMethod::define_basis_element(Vector &basis, Vector &basis_el, int &pivot_row, int &pivot_col) {
-    basis_el[pivot_row] = pivot_col + 1;
+    basis_el[pivot_row] = (float) pivot_col + 1;
     return basis_el;
 }
 
@@ -102,39 +102,62 @@ bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
     return true;
 }
 
+Vector SimplexMethod::form_x_vector(Vector &x, Vector &basis_el, Matrix &main_matrix){
+    for(int i = 0; i < basis_el.size(); ++i){
+        if(basis_el[i] != 0){
+            x[(int)basis_el[i] - 1] = main_matrix(i, main_matrix.columns()-1);
+        }
+    }
+    return x;
+}
+
 void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector &C, const float accuracy) {
-    check_feasibility(A, B, C, accuracy);
+    bool is_feasible = check_feasibility(A, B, C, accuracy);
 
+    if(is_feasible) {
+        is_feasible =  false;
 
-    Matrix main_matrix;
-    Vector func_coefficients;
+        Matrix main_matrix;
+        Vector func_coefficients;
 
-    Vector net_eval;
-    initialize_algorithm_data(A, B, C, main_matrix, func_coefficients, net_eval);
-    Vector basis(main_matrix.rows(), 0.0f);
-    Vector profit(main_matrix.columns(), 0.0f);
-    Vector basis_el(main_matrix.rows(), 0.0f);
-    Vector ratio(main_matrix.rows(), 0.0f);
+        Vector net_eval;
+        initialize_algorithm_data(A, B, C, main_matrix, func_coefficients, net_eval);
+        Vector basis(main_matrix.rows(), 0.0f);
+        Vector profit(main_matrix.columns(), 0.0f);
+        Vector basis_el(main_matrix.rows(), 0.0f);
+        Vector ratio(main_matrix.rows(), 0.0f);
+        Vector x(C.size(), 0.0f);
 
+        for (int i = 0; i < max(A.columns(), A.rows()); ++i) {
+            int pivot_col = define_pivot_col(net_eval);
+            ratio = calculate_ratio(main_matrix, pivot_col, accuracy);
+            int pivot_row = define_pivot_row(ratio);
+            float pivot_el = define_pivot_element(main_matrix, pivot_col, pivot_row);
+            basis = define_basis(basis, pivot_row, pivot_col, func_coefficients);
+            basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
+            main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el, accuracy);
+            profit = calculate_profit(main_matrix, basis, accuracy);
+            net_eval = calculate_net_evaluation(func_coefficients, profit);
 
-    for (int i = 0; i < A.rows(); ++i) {
-        int pivot_col = define_pivot_col(net_eval);
-        ratio = calculate_ratio(main_matrix, pivot_col, accuracy);
-        int pivot_row = define_pivot_row(ratio);
-        float pivot_el = define_pivot_element(main_matrix, pivot_col, pivot_row);
-        basis = define_basis(basis, pivot_row, pivot_col, func_coefficients);
-        basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
-        main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el, accuracy);
-        profit = calculate_profit(main_matrix, basis, accuracy);
-        net_eval = calculate_net_evaluation(func_coefficients, profit);
+            cout << "Iteration " << i+1 << ":";
+            cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
+            if (check_net_evaluation(net_eval)) {
+                is_feasible = true;
+                break;
+            }
+        }
 
-        cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
-        if (check_net_evaluation(net_eval)) break;
+        if (!is_feasible) cout << "There is no feasible solution!\n";
+        else{
+            //cout << basis_el << "\n" << main_matrix.getCol(main_matrix.columns()-1);
+            cout << "Answer:\n";
+            x = form_x_vector(x, basis_el, main_matrix);
+            for (int i = 0; i < x.size(); ++i) {
+                cout << "x_" << i+1 << " = " << x[i] << "\n";
+            }
+            cout << "Profit = " << profit[profit.size() - 1] << "\n";
+        }
     }
-    for (int i = 0; i < basis.size(); ++i) {
-        if (basis_el[i] != 0) cout << "x_" << basis_el[i] << " = " << main_matrix(i, main_matrix.columns()-1) << "\n";
-    }
-    cout << "Profit = " << profit[profit.size() - 1] << "\n" << profit;
 }
 
 // parser of initial vectors
@@ -161,7 +184,7 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
         main_matrix(i, main_matrix.columns() - 1) = B[i];
     }
 
-    cout << "Check of initial data data:\n" << main_matrix << ":coefficients:\n" << func_coefficients << ":net_eval:\n"
+    cout << "Initial data:\n" << main_matrix << ":coefficients:\n" << func_coefficients << ":net_eval:\n"
          << net_eval << "\n";
 }
 
@@ -190,10 +213,12 @@ Matrix SimplexMethod::rounding(float epsilon, Matrix &variable) {
 }
 
 
-void SimplexMethod::check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon) {
+bool SimplexMethod::check_feasibility(const Matrix &A, const Vector &B, const Vector &C, float epsilon) {
     for (int i = 0; i < B.size(); ++i) {
         if (isless(B[i], epsilon - epsilon)) {
-            cout << "Infeasible solution: Wrong input for vector B";
+            cout << "There is no feasible solution!";
+            return false;
         }
     }
+    return true;
 }
