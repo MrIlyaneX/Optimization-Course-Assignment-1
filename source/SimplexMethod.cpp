@@ -137,7 +137,7 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
             basis_el = define_basis_element(basis, basis_el, pivot_row, pivot_col);
             main_matrix = update_main_matrix(main_matrix, pivot_row, pivot_col, pivot_el, accuracy);
             profit = calculate_profit(main_matrix, basis, accuracy);
-            net_eval = calculate_net_evaluation(func_coefficients, profit);
+            net_eval = calculate_net_evaluation(func_coefficients, profit, accuracy);
 
             cout << "Iteration " << i+1 << ":";
             cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
