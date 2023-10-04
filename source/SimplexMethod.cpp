@@ -6,9 +6,10 @@
 
 // to check signs of numbers (since floating point numbers could work badly with <= or ==)
 #include <cmath>
+#include<cfloat>
 
 int SimplexMethod::define_pivot_col(Vector &net_eval) {
-    float mx = MAXFLOAT;
+    float mx = FLT_MIN;
     int index = -1;
     for (int i = 0; i < net_eval.size(); ++i) {
         if (islessequal(mx, net_eval[i])) {
@@ -39,7 +40,7 @@ Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col, const
 }
 
 int SimplexMethod::define_pivot_row(Vector &ratio) {
-    float ans = MAXFLOAT;
+    float ans = FLT_MAX;
     int index = -1;
     for (int i = 0; i < ratio.size(); ++i) {
         if (signbit(ratio[i])) continue;
@@ -149,7 +150,7 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
 
         if (!is_feasible) cout << "There is no feasible solution!\n";
         else{
-            //cout << basis_el << "\n" << main_matrix.getCol(main_matrix.columns()-1);
+            cout << basis_el << "\n" << main_matrix.getCol(main_matrix.columns()-1);
             cout << "Answer:\n";
             x = form_x_vector(x, basis_el, main_matrix);
             for (int i = 0; i < x.size(); ++i) {
