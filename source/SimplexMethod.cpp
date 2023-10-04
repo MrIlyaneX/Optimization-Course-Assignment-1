@@ -8,7 +8,7 @@
 #include <cmath>
 
 int SimplexMethod::define_pivot_col(Vector &net_eval) {
-    float mx = net_eval[0];
+    float mx = MAXFLOAT;
     int index = -1;
     for (int i = 0; i < net_eval.size(); ++i) {
         if (islessequal(mx, net_eval[i])) {
@@ -39,7 +39,7 @@ Vector SimplexMethod::calculate_ratio(Matrix &main_matrix, int &pivot_col, const
 }
 
 int SimplexMethod::define_pivot_row(Vector &ratio) {
-    float ans = ratio[0];
+    float ans = MAXFLOAT;
     int index = -1;
     for (int i = 0; i < ratio.size(); ++i) {
         if (signbit(ratio[i])) continue;
@@ -90,9 +90,9 @@ Vector SimplexMethod::calculate_profit(Matrix &main_matrix, Vector &basis, const
     return rounding(accuracy, temp);
 }
 
-Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Vector &profit) {
+Vector SimplexMethod::calculate_net_evaluation(Vector &function_coefficients, Vector &profit, float accuracy) {
     Vector ans = (function_coefficients - profit);
-    return rounding(0.1, ans);
+    return rounding(accuracy, ans);
 }
 
 bool SimplexMethod::check_net_evaluation(Vector &net_eval) {
@@ -166,7 +166,7 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
                                               Vector &func_coefficients, Vector &net_eval) {
 
 
-    main_matrix = Matrix(A.rows(), A.columns() * 2 + 1);
+    main_matrix = Matrix(A.rows(), A.columns() + B.size() + 1);
     func_coefficients = Vector(main_matrix.columns() - 1, 0.0f);
     for (int i = 0; i < A.rows(); ++i) {
         for (int j = 0; j < A.columns(); ++j) {

@@ -38,7 +38,7 @@ private:
 
     static Vector calculate_profit(Matrix &main_matrix, Vector &basis, float accuracy);
 
-    static Vector calculate_net_evaluation(Vector &function_coefficients, Vector &profit);
+    static Vector calculate_net_evaluation(Vector &function_coefficients, Vector &profit, float accuracy);
 
     static bool check_net_evaluation(Vector &net_eval);
 
