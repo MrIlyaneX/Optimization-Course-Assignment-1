@@ -140,8 +140,8 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
             profit = calculate_profit(main_matrix, basis, accuracy);
             net_eval = calculate_net_evaluation(func_coefficients, profit, accuracy);
 
-            cout << "Iteration " << i+1 << ":";
-            cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
+            //cout << "Iteration " << i+1 << ":";
+            //cout << "\n:main_matrix:\n" << main_matrix << ":profit:\n" << profit << ":net_eval:\n" << net_eval << "\n\n";
             if (check_net_evaluation(net_eval)) {
                 is_feasible = true;
                 break;
@@ -150,7 +150,6 @@ void SimplexMethod::start_simplex(const Matrix &A, const Vector &B, const Vector
 
         if (!is_feasible) cout << "There is no feasible solution!\n";
         else{
-            cout << basis_el << "\n" << main_matrix.getCol(main_matrix.columns()-1);
             cout << "Answer:\n";
             x = form_x_vector(x, basis_el, main_matrix);
             for (int i = 0; i < x.size(); ++i) {
@@ -185,8 +184,8 @@ void SimplexMethod::initialize_algorithm_data(const Matrix &A, const Vector &B, 
         main_matrix(i, main_matrix.columns() - 1) = B[i];
     }
 
-    cout << "Initial data:\n" << main_matrix << ":coefficients:\n" << func_coefficients << ":net_eval:\n"
-         << net_eval << "\n";
+//    cout << "Initial data:\n" << main_matrix << ":coefficients:\n" << func_coefficients << ":net_eval:\n"
+//         << net_eval << "\n";
 }
 
 // rounds the numbers using given epsilon, should work with small epsilon
