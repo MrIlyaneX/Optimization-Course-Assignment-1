@@ -1,6 +1,7 @@
 # Optimization-Course-Assignment-1
-Repository for teamwork assignment of Optimization Course
+Repository for teamwork assignment of Optimization Course.
 
+Implementation of Simplex Table method on C++20
 
 # Vector
 
@@ -22,8 +23,8 @@ Provide simple assert based test for checking the correctness of the implemented
 
 # Team:
 
-- member 1
-- member 2
-- member 3
-- member 4
-- member 5
+- Milyausha Shamsutdinova
+- Ilia Mistiurin
+- Lev Ryskildin
+- Mikhail Zimin
+- Elena Tesmeeva
